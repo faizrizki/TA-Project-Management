@@ -1,18 +1,21 @@
-interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  children: React.ReactNode;
+interface ButtonProps {
+  text: string;
+  type?: "button" | "submit";
+  onClick?: () => void;
 }
 
 export default function Button({
-  children,
-  ...props
+  text,
+  type = "button",
+  onClick,
 }: ButtonProps) {
   return (
     <button
-      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-      {...props}
+      type={type}
+      onClick={onClick}
+      className="w-full bg-red-600 hover:bg-red-700 transition text-white font-semibold py-4 rounded-xl"
     >
-      {children}
+      {text}
     </button>
   );
 }
