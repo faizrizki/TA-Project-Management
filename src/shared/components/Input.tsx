@@ -11,26 +11,28 @@ export default function Input({
 }: InputProps) {
   return (
     <div>
-      <label className="block mb-3 text-base font-medium text-gray-700">
-        {label}
-      </label>
+      {label && (
+        <label className="block mb-2 text-base font-bold text-gray-900">
+          {label}
+        </label>
+      )}
 
       <input
         {...props}
         className="
           w-full
           px-5
-          py-4
-          rounded-2xl
+          py-3
+          rounded-full
           border
-          border-gray-300
+          border-black
           bg-white
           outline-none
-          text-lg
+          text-base
           transition
           focus:ring-2
-          focus:ring-red-500
-          focus:border-red-500
+          focus:ring-[#F25C66]
+          focus:border-[#F25C66]
         "
       />
     </div>

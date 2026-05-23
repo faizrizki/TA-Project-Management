@@ -1,13 +1,15 @@
 "use client";
 
-import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 import { useForm } from "react-hook-form";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import Input from "@/shared/components/Input";
 import Button from "@/shared/components/Button";
+
+import AuthLayout from "./AuthLayout";
 
 import {
   loginSchema,
@@ -15,8 +17,15 @@ import {
 } from "../validation/loginSchema";
 
 import { setToken } from "../utils/auth";
+import { useAuthStore } from "../store/authStore";
+import { useUserStore } from "@/modules/user/store/userStore";
 
 export default function LoginForm() {
+  const router = useRouter();
+  const setUser = useAuthStore((s) => s.setUser);
+
+  const [loginError, setLoginError] = useState<string | null>(null);
+
   const {
     register,
     handleSubmit,
@@ -25,158 +34,114 @@ export default function LoginForm() {
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = (
-    data: LoginSchemaType
-  ) => {
-    console.log(data);
+  const onSubmit = async (data: LoginSchemaType) => {
+    // ============================================================
+    // TODO: Aktifkan saat backend siap, hapus block "DUMMY" di bawah
+    // ------------------------------------------------------------
+    // POST http://localhost:8000/api/login
+    // Body:    { email: string, password: string }
+    // Success (200):
+    //   { success: true,
+    //     data: {
+    //       user: { id, name, email, role },
+    //       token: "eyJhbGciOi..."
+    //     },
+    //     message: "Login berhasil" }
+    // Error (401): { success: false, message: "Email atau password salah" }
+    // Error (422): { success: false, message: "...", errors: { email: [...] } }
+    // ------------------------------------------------------------
+    // import { login } from "../services/authServices";
+    // try {
+    //   const res = await login(data);
+    //   const { user, token } = res.data.data;
+    //   setUser(user);
+    //   setToken(token);
+    //   window.location.replace("/dashboard");
+    // } catch (err: any) {
+    //   setLoginError(err.response?.data?.message ?? "Gagal login");
+    // }
+    // ============================================================
+
+    // ===== DUMMY (hapus saat API siap) =====
+    const user = useUserStore
+      .getState()
+      .findByCredentials(data.email, data.password);
+
+    if (!user) {
+      setLoginError("Email atau password salah");
+      return;
+    }
+
+    setUser({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    });
 
     setToken("dummy-token");
 
     window.location.replace("/dashboard");
+    // ===== END DUMMY =====
   };
 
   return (
-    <div className="min-h-screen bg-[#1e1e1e] flex items-center justify-center px-4 py-10">
+    <AuthLayout>
+      <h2 className="text-4xl font-bold text-gray-900 mb-8">
+        Masuk
+      </h2>
 
-      <div
-        className="
-          w-full
-          max-w-7xl
-          min-h-[700px]
-          bg-[#f5f5f5]
-          rounded-[40px]
-          overflow-hidden
-          shadow-2xl
-          grid
-          grid-cols-1
-          md:grid-cols-2
-        "
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-5"
       >
+        <div>
+          <Input
+            type="email"
+            label="Email"
+            {...register("email")}
+          />
 
-        {/* LEFT */}
-        <div
-          className="
-            bg-red-600
-            flex
-            flex-col
-            items-center
-            justify-center
-            px-10
-            py-16
-          "
-        >
-          <h1
-            className="
-              text-6xl
-              font-extrabold
-              text-white
-              text-center
-              leading-tight
-            "
-          >
-            Project
-            <br />
-            Management
-          </h1>
-
-          <p
-            className="
-              text-white/90
-              text-center
-              mt-8
-              max-w-md
-              text-xl
-              leading-relaxed
-            "
-          >
-            Kelola proyek, task, dan kolaborasi tim
-            dengan lebih efektif.
-          </p>
-        </div>
-
-        {/* RIGHT */}
-        <div
-          className="
-            flex
-            items-center
-            justify-center
-            px-8
-            py-14
-            md:px-20
-          "
-        >
-          <div className="w-full max-w-xl">
-
-            <div className="mb-10">
-              <h2 className="text-5xl font-bold text-gray-900">
-                Masuk
-              </h2>
-
-              <p className="text-gray-500 mt-3 text-lg">
-                Silakan login untuk melanjutkan
-              </p>
-            </div>
-
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              className="space-y-6"
-            >
-
-              {/* EMAIL */}
-              <div>
-                <Input
-                  type="email"
-                  label="Email"
-                  placeholder="Masukkan email"
-                  {...register("email")}
-                />
-
-                {errors.email && (
-                  <p className="text-red-500 text-sm mt-2">
-                    {errors.email.message}
-                  </p>
-                )}
-              </div>
-
-              {/* PASSWORD */}
-              <div>
-                <Input
-                  type="password"
-                  label="Password"
-                  placeholder="Masukkan password"
-                  {...register("password")}
-                />
-
-                {errors.password && (
-                  <p className="text-red-500 text-sm mt-2">
-                    {errors.password.message}
-                  </p>
-                )}
-              </div>
-
-              <Button
-                type="submit"
-                text="Masuk"
-              />
-            </form>
-
-            <p className="text-center text-base mt-8 text-gray-600">
-              Belum punya akun?{" "}
-              <Link
-                href="/auth/register"
-                className="
-                  text-red-600
-                  font-semibold
-                  hover:underline
-                "
-              >
-                Daftar sekarang
-              </Link>
+          {errors.email && (
+            <p className="text-red-500 text-sm mt-2">
+              {errors.email.message}
             </p>
-
-          </div>
+          )}
         </div>
-      </div>
-    </div>
+
+        <div>
+          <Input
+            type="password"
+            label="Password"
+            {...register("password")}
+          />
+
+          {errors.password && (
+            <p className="text-red-500 text-sm mt-2">
+              {errors.password.message}
+            </p>
+          )}
+        </div>
+
+        {loginError && (
+          <p className="text-red-500 text-sm">{loginError}</p>
+        )}
+
+        <div className="space-y-3 pt-4">
+          <Button
+            type="submit"
+            text="Masuk"
+            variant="primary"
+          />
+
+          <Button
+            type="button"
+            text="Buat Akun"
+            variant="dark"
+            onClick={() => router.push("/auth/register")}
+          />
+        </div>
+      </form>
+    </AuthLayout>
   );
 }
