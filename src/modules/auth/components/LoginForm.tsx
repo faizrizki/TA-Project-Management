@@ -1,74 +1,176 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+
+import { useForm } from "react-hook-form";
+
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import Input from "@/shared/components/Input";
 import Button from "@/shared/components/Button";
 
+import {
+  loginSchema,
+  LoginSchemaType,
+} from "../validation/loginSchema";
+
+import { setToken } from "../utils/auth";
+
 export default function LoginForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] =
-    useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginSchemaType>({
+    resolver: zodResolver(loginSchema),
+  });
+
+  const onSubmit = (
+    data: LoginSchemaType
+  ) => {
+    console.log(data);
+
+    setToken("dummy-token");
+
+    window.location.replace("/dashboard");
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#1f1f1f] p-6">
-      <div className="w-full max-w-5xl h-[650px] bg-[#d9d9d9] rounded-[30px] overflow-hidden shadow-2xl grid grid-cols-1 md:grid-cols-2">
+    <div className="min-h-screen bg-[#1e1e1e] flex items-center justify-center px-4 py-10">
+
+      <div
+        className="
+          w-full
+          max-w-7xl
+          min-h-[700px]
+          bg-[#f5f5f5]
+          rounded-[40px]
+          overflow-hidden
+          shadow-2xl
+          grid
+          grid-cols-1
+          md:grid-cols-2
+        "
+      >
 
         {/* LEFT */}
-        <div className="bg-red-600 flex items-center justify-center">
-          <h1 className="text-4xl font-bold text-black">
-            Project Management
+        <div
+          className="
+            bg-red-600
+            flex
+            flex-col
+            items-center
+            justify-center
+            px-10
+            py-16
+          "
+        >
+          <h1
+            className="
+              text-6xl
+              font-extrabold
+              text-white
+              text-center
+              leading-tight
+            "
+          >
+            Project
+            <br />
+            Management
           </h1>
+
+          <p
+            className="
+              text-white/90
+              text-center
+              mt-8
+              max-w-md
+              text-xl
+              leading-relaxed
+            "
+          >
+            Kelola proyek, task, dan kolaborasi tim
+            dengan lebih efektif.
+          </p>
         </div>
 
         {/* RIGHT */}
-        <div className="flex items-center justify-center px-10">
-          <div className="w-full max-w-md">
+        <div
+          className="
+            flex
+            items-center
+            justify-center
+            px-8
+            py-14
+            md:px-20
+          "
+        >
+          <div className="w-full max-w-xl">
 
-            <h2 className="text-4xl font-bold mb-2">
-              Masuk
-            </h2>
+            <div className="mb-10">
+              <h2 className="text-5xl font-bold text-gray-900">
+                Masuk
+              </h2>
 
-            <p className="text-gray-700 mb-8">
-              Silakan masuk untuk melanjutkan
-            </p>
+              <p className="text-gray-500 mt-3 text-lg">
+                Silakan login untuk melanjutkan
+              </p>
+            </div>
 
-            <form className="space-y-5">
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="space-y-6"
+            >
 
-              <Input
-                type="email"
-                label="Email"
-                placeholder="Masukkan email"
-                value={email}
-                onChange={(e) =>
-                  setEmail(e.target.value)
-                }
-              />
+              {/* EMAIL */}
+              <div>
+                <Input
+                  type="email"
+                  label="Email"
+                  placeholder="Masukkan email"
+                  {...register("email")}
+                />
 
-              <Input
-                type="password"
-                label="Password"
-                placeholder="Masukkan password"
-                value={password}
-                onChange={(e) =>
-                  setPassword(e.target.value)
-                }
-              />
+                {errors.email && (
+                  <p className="text-red-500 text-sm mt-2">
+                    {errors.email.message}
+                  </p>
+                )}
+              </div>
+
+              {/* PASSWORD */}
+              <div>
+                <Input
+                  type="password"
+                  label="Password"
+                  placeholder="Masukkan password"
+                  {...register("password")}
+                />
+
+                {errors.password && (
+                  <p className="text-red-500 text-sm mt-2">
+                    {errors.password.message}
+                  </p>
+                )}
+              </div>
 
               <Button
                 type="submit"
-                text="Konfirmasi"
+                text="Masuk"
               />
             </form>
 
-            <p className="text-center mt-6 text-sm">
+            <p className="text-center text-base mt-8 text-gray-600">
               Belum punya akun?{" "}
               <Link
                 href="/auth/register"
-                className="text-red-600 font-semibold"
+                className="
+                  text-red-600
+                  font-semibold
+                  hover:underline
+                "
               >
-                Daftar di sini
+                Daftar sekarang
               </Link>
             </p>
 

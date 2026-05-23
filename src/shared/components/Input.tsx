@@ -1,32 +1,37 @@
-interface InputProps {
-  type?: string;
-  placeholder?: string;
+import React from "react";
+
+interface InputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
-  value?: string;
-  onChange?: (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => void;
 }
 
 export default function Input({
-  type = "text",
-  placeholder,
   label,
-  value,
-  onChange,
+  ...props
 }: InputProps) {
   return (
     <div>
-      <label className="block mb-2 text-sm font-medium">
+      <label className="block mb-3 text-base font-medium text-gray-700">
         {label}
       </label>
 
       <input
-        type={type}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        className="w-full px-4 py-4 rounded-xl border border-gray-300 bg-white outline-none focus:ring-2 focus:ring-red-500"
+        {...props}
+        className="
+          w-full
+          px-5
+          py-4
+          rounded-2xl
+          border
+          border-gray-300
+          bg-white
+          outline-none
+          text-lg
+          transition
+          focus:ring-2
+          focus:ring-red-500
+          focus:border-red-500
+        "
       />
     </div>
   );

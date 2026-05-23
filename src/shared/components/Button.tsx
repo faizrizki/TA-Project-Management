@@ -13,7 +13,18 @@ export default function Button({
     <button
       type={type}
       onClick={onClick}
-      className="w-full bg-red-600 hover:bg-red-700 transition text-white font-semibold py-4 rounded-xl"
+      className="
+        w-full
+        bg-red-600
+        hover:bg-red-700
+        transition
+        text-white
+        font-semibold
+        text-lg
+        py-4
+        rounded-2xl
+        shadow-lg
+      "
     >
       {text}
     </button>

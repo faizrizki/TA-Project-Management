@@ -1,98 +1,189 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+
+import { useForm } from "react-hook-form";
+
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import Input from "@/shared/components/Input";
 import Button from "@/shared/components/Button";
 
+import {
+  registerSchema,
+  RegisterSchemaType,
+} from "../validation/registerSchema";
+
 export default function RegisterForm() {
-  const [email, setEmail] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterSchemaType>({
+    resolver: zodResolver(registerSchema),
+  });
 
-  const [password, setPassword] =
-    useState("");
-
-  const [confirmPassword, setConfirmPassword] =
-    useState("");
+  const onSubmit = (
+    data: RegisterSchemaType
+  ) => {
+    console.log(data);
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#1f1f1f] p-6">
-      <div className="w-full max-w-5xl h-[700px] bg-[#d9d9d9] rounded-[30px] overflow-hidden shadow-2xl grid grid-cols-1 md:grid-cols-2">
+    <div className="min-h-screen bg-[#1e1e1e] flex items-center justify-center px-4 py-10">
+
+      <div
+        className="
+          w-full
+          max-w-7xl
+          min-h-[700px]
+          bg-[#f5f5f5]
+          rounded-[40px]
+          overflow-hidden
+          shadow-2xl
+          grid
+          grid-cols-1
+          md:grid-cols-2
+        "
+      >
 
         {/* LEFT */}
-        <div className="bg-red-600 flex items-center justify-center">
-          <h1 className="text-4xl font-bold text-black">
-            Project Management
+        <div
+          className="
+            bg-red-600
+            flex
+            flex-col
+            items-center
+            justify-center
+            px-10
+            py-16
+          "
+        >
+          <h1
+            className="
+              text-6xl
+              font-extrabold
+              text-white
+              text-center
+              leading-tight
+            "
+          >
+            Project
+            <br />
+            Management
           </h1>
+
+          <p
+            className="
+              text-white/90
+              text-center
+              mt-8
+              max-w-md
+              text-xl
+              leading-relaxed
+            "
+          >
+            Buat akun dan mulai kolaborasi proyek
+            bersama tim organisasi Anda.
+          </p>
         </div>
 
         {/* RIGHT */}
-        <div className="flex items-center justify-center px-10 py-10 overflow-y-auto">
-          <div className="w-full max-w-md">
+        <div
+          className="
+            flex
+            items-center
+            justify-center
+            px-8
+            py-14
+            md:px-20
+          "
+        >
+          <div className="w-full max-w-xl">
 
-            <h2 className="text-4xl font-bold mb-2">
-              Buat Akun
-            </h2>
+            <div className="mb-10">
+              <h2 className="text-5xl font-bold text-gray-900">
+                Daftar
+              </h2>
 
-            <p className="text-gray-700 mb-8">
-              Silakan daftar untuk membuat akun
-            </p>
+              <p className="text-gray-500 mt-3 text-lg">
+                Buat akun baru untuk melanjutkan
+              </p>
+            </div>
 
-            <form className="space-y-5">
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="space-y-6"
+            >
 
-              <Input
-                type="email"
-                label="Email"
-                placeholder="Masukkan email"
-                value={email}
-                onChange={(e) =>
-                  setEmail(e.target.value)
-                }
-              />
+              {/* EMAIL */}
+              <div>
+                <Input
+                  type="email"
+                  label="Email"
+                  placeholder="Masukkan email"
+                  {...register("email")}
+                />
 
-              <Input
-                type="password"
-                label="Password"
-                placeholder="Masukkan password"
-                value={password}
-                onChange={(e) =>
-                  setPassword(e.target.value)
-                }
-              />
+                {errors.email && (
+                  <p className="text-red-500 text-sm mt-2">
+                    {errors.email.message}
+                  </p>
+                )}
+              </div>
 
-              <Input
-                type="password"
-                label="Konfirmasi Password"
-                placeholder="Konfirmasi password"
-                value={confirmPassword}
-                onChange={(e) =>
-                  setConfirmPassword(
-                    e.target.value
-                  )
-                }
-              />
+              {/* PASSWORD */}
+              <div>
+                <Input
+                  type="password"
+                  label="Password"
+                  placeholder="Masukkan password"
+                  {...register("password")}
+                />
 
-              <button
-                type="button"
-                className="w-full bg-white border border-gray-300 py-4 rounded-xl font-medium hover:bg-gray-100 transition"
-              >
-                Login menggunakan Google
-              </button>
+                {errors.password && (
+                  <p className="text-red-500 text-sm mt-2">
+                    {errors.password.message}
+                  </p>
+                )}
+              </div>
+
+              {/* CONFIRM PASSWORD */}
+              <div>
+                <Input
+                  type="password"
+                  label="Konfirmasi Password"
+                  placeholder="Konfirmasi password"
+                  {...register("confirmPassword")}
+                />
+
+                {errors.confirmPassword && (
+                  <p className="text-red-500 text-sm mt-2">
+                    {
+                      errors.confirmPassword
+                        .message
+                    }
+                  </p>
+                )}
+              </div>
 
               <Button
                 type="submit"
-                text="Konfirmasi"
+                text="Daftar"
               />
-
             </form>
 
-            <p className="text-center mt-6 text-sm">
+            <p className="text-center text-base mt-8 text-gray-600">
               Sudah punya akun?{" "}
               <Link
                 href="/auth/login"
-                className="text-red-600 font-semibold"
+                className="
+                  text-red-600
+                  font-semibold
+                  hover:underline
+                "
               >
-                Masuk di sini
+                Masuk sekarang
               </Link>
             </p>
 
